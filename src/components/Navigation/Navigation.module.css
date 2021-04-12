@@ -1,0 +1,31 @@
+.navigation {
+    grid-area: n;
+    position: fixed;
+    background-color: #fff;
+    margin-top: 80px;
+    box-sizing: border-box;
+    width: 100px;
+    height: 100vh;
+    padding: 10px;
+    z-index: 10;
+}
+
+
+.item {
+    list-style-type: none;
+    padding: 10px 0;
+}
+
+.item a {
+    color: #9ba0c0;
+    text-decoration: none;
+    font-weight: bold;
+    transition-property: color;
+    transition-timing-function: ease;
+    transition-duration: .7s;
+}
+
+.item a:hover{
+
+    color: #545669;
+}

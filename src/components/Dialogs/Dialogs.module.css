@@ -1,0 +1,78 @@
+.dialogs{
+    display: grid;
+    grid-template-columns: 2fr 10fr;
+}
+
+.dialogItems{
+    border-right: 2px solid white;
+    padding: 10px;
+}
+
+.dialog{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dialog a{
+    color: #3f4257;
+    text-decoration: none;
+}
+
+.dialogName{
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.dialog a:hover{
+    color: #de9448;
+}
+
+.dialogItems .active{
+    background-color: white;
+}
+
+.messages{
+    padding: 10px;
+}
+
+.newMessage{
+    clear: both;
+}
+
+.allMessages{
+    margin-bottom: 50px;
+}
+
+.message{
+    background-color: #ffffff;
+    padding: 10px;
+    max-width: 300px;
+    min-width: 200px;
+    box-sizing: border-box;
+    margin:0 70px;
+    border-radius: 5px;
+}
+
+.leftMessage{
+    clear:right;
+}
+
+.rightMessage{
+    margin-top: 20px;
+    margin-right: 60px;
+    float:right;
+    clear: right;
+}
+
+.yourImg{
+    float: right;
+}
+
+.personImg{
+    float: left;
+}
+
+
+

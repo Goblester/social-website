@@ -1,0 +1,20 @@
+.friend{
+    text-align: center;
+}
+
+
+.circularLandscape{
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.circularLandscape img{
+    width: auto;
+    height: 100%;
+    margin-left: 0px;
+}
