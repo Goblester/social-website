@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import Profile from './Profile';
 import {RootState} from '../../redux/redux-store';
-import {requestStatus, ProfileType, requestProfile, setStatus} from '../../redux/profile-reducer';
+import {ProfileType, requestProfile, requestStatus, setPhoto, setStatus} from '../../redux/profile-reducer';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from '@reduxjs/toolkit';
 import Preloader from '../common/Preloader/Preloader';
@@ -18,7 +18,7 @@ class ProfileContainer extends React.Component<ProfileContainerPropsType, never>
         super(props);
     };
 
-    componentDidMount() {
+    refreshProfile() {
         let userId = Number(this.props.match.params.userId);
         if (!userId) {
             userId = this.props.userId as number;
@@ -30,9 +30,17 @@ class ProfileContainer extends React.Component<ProfileContainerPropsType, never>
         this.props.requestProfile(userId);
         // setTimeout(() => {
         this.props.requestStatus(userId);
-        //    }, 2000)
+    }
 
+    componentDidMount() {
+        this.refreshProfile()
     };
+
+    componentDidUpdate(prevState: ProfileContainerPropsType) {
+        if (this.props.match.params.userId !== prevState.match.params.userId) {
+            this.refreshProfile();
+        }
+    }
 
     render() {
         if (!this.props.profile) {
@@ -42,7 +50,7 @@ class ProfileContainer extends React.Component<ProfileContainerPropsType, never>
         }
         return (
             <Profile profile={this.props.profile} status={this.props.status} setStatus={this.props.setStatus}
-                     userId={this.props.userId as number}/>
+                     userId={this.props.userId as number} setPhoto={this.props.setPhoto}/>
         );
     };
 
@@ -62,6 +70,7 @@ type MapDispatchPropsType = {
     requestProfile: (userId: number) => void,
     setStatus: (status: string) => void,
     requestStatus: (userId: number) => void
+    setPhoto: (photoFile: File) => void
 };
 
 type OwnProfileContainerPropsType = MapDispatchPropsType & MapStatePropsType;
@@ -79,6 +88,7 @@ const mapDispatchToProps: MapDispatchPropsType = {
     requestProfile,
     setStatus,
     requestStatus,
+    setPhoto
 }
 
 

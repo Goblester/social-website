@@ -7,14 +7,13 @@ import {ProfileType} from '../../redux/profile-reducer';
 
 export type ProfilePropsType = {
     profile: ProfileType
-    status: string,
-    setStatus: (status: string) => void,
+    status: string
+    setStatus: (status: string) => void
     userId: number
+    setPhoto: (photo: File) => void
 }
 
 const Profile = React.memo<ComponentType<ProfilePropsType>>((props: ProfilePropsType) => {
-    console.log('RENDER');
-    console.log(props);
     return (
         <section>
             <ProfileInfo {...props}/>

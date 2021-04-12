@@ -76,6 +76,12 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileP
                 ...state,
                 posts: [...state.posts.filter(p => p.id !== action.id)]
             }
+        case 'social-network/profile/SET-PHOTO-SUCCESS':
+            const newProfile = state.profile ? {...state.profile, photos: {...action.photos}} : null;
+            return {
+                ...state,
+                profile: newProfile
+            }
 
         default:
             return state;
@@ -87,12 +93,14 @@ export type ProfilePageActionTypes =
     | AddPostActionType
     | setProfileActionType
     | setStatusActionType
-    | deletePostActionType;
+    | deletePostActionType
+    | setPhotoActionType;
 
 const ADD_POST = 'social-network/profile/ADD-POST';
 const SET_PROFILE = 'social-network/profile/SET-PROFILE';
 const SET_STATUS = 'social-network/profile/SET-STATUS';
 const DELETE_POST = 'social-network/profile/DELETE-POST';
+const SET_PHOTO_SUCCESS = 'social-network/profile/SET-PHOTO-SUCCESS';
 
 
 export type AddPostActionType = {
@@ -115,6 +123,11 @@ export type deletePostActionType = {
     id: number
 }
 
+export type setPhotoActionType = {
+    type: typeof SET_PHOTO_SUCCESS
+    photos: PhotosType
+}
+
 export const addPost = (post: string): AddPostActionType => ({type: ADD_POST, post})
 
 export const setProfile = (profile: ProfileType): setProfileActionType => ({type: SET_PROFILE, profile: profile});
@@ -123,6 +136,7 @@ export const setStatusAccept = (status: string): setStatusActionType => ({type: 
 
 export const deletePost = (id: number): deletePostActionType => ({type: DELETE_POST, id})
 
+const setPhotoSuccess = (photos: PhotosType): setPhotoActionType => ({type: SET_PHOTO_SUCCESS, photos})
 
 export function requestProfile(userId: number): ThunkAction<void, InitialStateType, undefined, ProfilePageActionTypes> {
     return function (dispatch) {
@@ -148,6 +162,13 @@ export function requestStatus(userId: number): ThunkAction<void, InitialStateTyp
     return async function (dispatch: Dispatch<ProfilePageActionTypes>) {
         const data = await profileAPI.getStatus(userId);
         dispatch(setStatusAccept(data));
+    }
+}
+
+export function setPhoto(photos: File) {
+    return async function (dispatch: Dispatch<ProfilePageActionTypes>) {
+        const newPhoto = await profileAPI.setPhoto(photos);
+        dispatch(setPhotoSuccess({...newPhoto.photos}))
     }
 }
 
