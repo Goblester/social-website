@@ -4,6 +4,7 @@ import s from './ProfileInfo.module.css';
 import userPhoto from './../../../assets/images/userPhoto.png'
 import ProfileStatus from './ProfileStatus';
 import {ProfileType} from '../../../redux/profile-reducer';
+import {ProfileData} from './ProfileData/ProfileData';
 
 
 type ProfileInfoPropsType = {
@@ -26,15 +27,18 @@ function ProfileInfo({profile, setStatus, status, userId, ...restProps}: Profile
     return (
         <div>
             <div className={s.descriptionBlock}>
-                <img src={profile.photos.large !== null ? profile.photos.large : userPhoto} alt=""/>
                 <div>
-                    <ProfileStatus setStatus={setStatus}
-                                   status={status}
-                                   userId={userId}
-                                   profileId={profile.userId}/>
+                    <img src={profile.photos.large !== null ? profile.photos.large : userPhoto} alt=""/>
                     {isMe && <input type="file" onChange={getPhoto}/>}
                 </div>
+
+                <ProfileStatus setStatus={setStatus}
+                               status={status}
+                               userId={userId}
+                               profileId={profile.userId}/>
+                <ProfileData isMe={isMe} profile={profile}/>
             </div>
+
         </div>
     );
 }
