@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Field, Form} from 'react-final-form';
 import {LoginDataType} from './Login';
 import {Input} from '../common/FormsControls/FormsControls';
@@ -8,7 +8,7 @@ import {FORM_ERROR} from 'final-form';
 type LoginFormPropsType = {
     setAuthorization: (loginData: LoginDataType) => void,
     submitError: string | undefined,
-    setSubmitError: (submitError: string | undefined)=>void
+    setSubmitError: (submitError: string | undefined) => void
 }
 
 const LoginForm = ({setAuthorization, ...props}: LoginFormPropsType) => {
@@ -44,7 +44,7 @@ const LoginForm = ({setAuthorization, ...props}: LoginFormPropsType) => {
                           </div>
                           <div className="error">{error}</div>
                           <button type={'submit'} onClick={() => {
-                            props.setSubmitError(undefined);
+                              props.setSubmitError(undefined);
                           }} disabled={submitting}>login
                           </button>
                       </form>

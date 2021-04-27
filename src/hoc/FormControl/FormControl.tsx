@@ -1,7 +1,7 @@
 import React from 'react';
 import s from '../../components/common/FormsControls/FormControls.module.css';
 
-const Element = (Element:any) => ({input, meta, ...props}:any)=>{
+const Element = (Element: any) => ({input, meta, ...props}: any) => {
     const hasError = meta.invalid && meta.touched;
     return (
         <div className={s.textareaForm}>
@@ -15,5 +15,11 @@ const Element = (Element:any) => ({input, meta, ...props}:any)=>{
     )
 }
 
+
+export const ElementUI = (Element: any) => ({input, meta, ...props}: any) => {
+    return (
+        <Element {...input} {...props}/>
+    )
+}
 
 export default Element;

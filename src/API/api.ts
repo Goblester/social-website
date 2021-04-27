@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {LoginDataType} from '../components/Login/Login';
+import {ProfileInfoType} from '../redux/profile-reducer';
 
 const instance = axios.create({
     withCredentials: true,
@@ -47,9 +48,13 @@ export const profileAPI = {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
-        })
-
+        });
         return response.data.data;
+    },
+    setProfileInfo: async function(profileInfo: ProfileInfoType){
+        const response = await instance.put('profile/', profileInfo);
+
+        return response.data;
     }
 }
 

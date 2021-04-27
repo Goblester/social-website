@@ -2,6 +2,7 @@ import {PhotosType} from './users-reducer';
 import {ThunkAction} from 'redux-thunk';
 import {profileAPI} from '../API/api';
 import {Dispatch} from 'react';
+import {RootState} from './redux-store';
 
 export type PostType = {
     id: number,
@@ -35,6 +36,14 @@ type InitialStateType = {
     profile: ProfileType | null,
     status: string
 };
+
+export type ProfileInfoType = {
+    aboutMe: string,
+    contacts: ContactsType,
+    lookingForAJob: boolean,
+    lookingForAJobDescription: string,
+    fullName: string
+}
 
 const initialState: InitialStateType = {
     posts: [
@@ -101,6 +110,7 @@ const SET_PROFILE = 'social-network/profile/SET-PROFILE';
 const SET_STATUS = 'social-network/profile/SET-STATUS';
 const DELETE_POST = 'social-network/profile/DELETE-POST';
 const SET_PHOTO_SUCCESS = 'social-network/profile/SET-PHOTO-SUCCESS';
+const SET_PROFILE_INFO = 'social-network/profile/SET-PROFILE-INFO';
 
 
 export type AddPostActionType = {
@@ -128,6 +138,7 @@ export type setPhotoActionType = {
     photos: PhotosType
 }
 
+
 export const addPost = (post: string): AddPostActionType => ({type: ADD_POST, post})
 
 export const setProfile = (profile: ProfileType): setProfileActionType => ({type: SET_PROFILE, profile: profile});
@@ -137,6 +148,8 @@ export const setStatusAccept = (status: string): setStatusActionType => ({type: 
 export const deletePost = (id: number): deletePostActionType => ({type: DELETE_POST, id})
 
 const setPhotoSuccess = (photos: PhotosType): setPhotoActionType => ({type: SET_PHOTO_SUCCESS, photos})
+
+type ThunkActionType = ThunkAction<void, InitialStateType, undefined, ProfilePageActionTypes>;
 
 export function requestProfile(userId: number): ThunkAction<void, InitialStateType, undefined, ProfilePageActionTypes> {
     return function (dispatch) {
@@ -149,6 +162,7 @@ export function requestProfile(userId: number): ThunkAction<void, InitialStateTy
 
 export function setStatus(status: string): ThunkAction<void, InitialStateType, undefined, ProfilePageActionTypes> {
     return async function (dispatch) {
+        debugger;
         const data = await profileAPI.setStatus(status);
 
         if (data.resultCode === 0) {
@@ -169,6 +183,22 @@ export function setPhoto(photos: File) {
     return async function (dispatch: Dispatch<ProfilePageActionTypes>) {
         const newPhoto = await profileAPI.setPhoto(photos);
         dispatch(setPhotoSuccess({...newPhoto.photos}))
+    }
+}
+
+export function setProfileInfo(profileInfo: ProfileInfoType) {
+    return async function (dispatch: Dispatch<ProfilePageActionTypes | ThunkActionType>, getState: () => RootState) {
+        const userId = getState().auth.userData?.id as number;
+        debugger;
+        const mappedProfileInfo = {
+            userId: userId,
+            ...profileInfo
+        }
+        const response = await profileAPI.setProfileInfo(mappedProfileInfo);
+        debugger;
+        if (response.resultCode == 0) {
+            dispatch(requestProfile(userId));
+        }
     }
 }
 

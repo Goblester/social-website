@@ -1,7 +1,7 @@
 import React from 'react';
 import './FormControls.module.css';
 import s from './FormControls.module.css';
-import Element from '../../../hoc/FormControl/FormControl';
+import Element, {ElementUI} from '../../../hoc/FormControl/FormControl';
 
 /*export const FormControl = ({meta, children}: any) => {
     const hasError = meta.invalid && meta.touched;
@@ -20,3 +20,5 @@ import Element from '../../../hoc/FormControl/FormControl';
 export const Input = Element('input');
 
 export const TextArea = Element('textarea');
+
+export const InputUI = ElementUI('Input')

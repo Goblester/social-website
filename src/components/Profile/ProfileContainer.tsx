@@ -2,12 +2,21 @@ import React from 'react';
 import {connect} from 'react-redux';
 import Profile from './Profile';
 import {RootState} from '../../redux/redux-store';
-import {ProfileType, requestProfile, requestStatus, setPhoto, setStatus} from '../../redux/profile-reducer';
+import {
+    ProfileInfoType,
+    ProfileType,
+    requestProfile,
+    requestStatus,
+    setPhoto,
+    setProfileInfo,
+    setStatus
+} from '../../redux/profile-reducer';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from '@reduxjs/toolkit';
 import Preloader from '../common/Preloader/Preloader';
 import {getProfile, getStatus} from '../../redux/selectors/profile-selectors';
 import {getAuthId} from '../../redux/selectors/auth-selectors';
+import {ProfileFormData} from './ProfileInfo/ProfileData/ProfileData';
 
 ;
 
@@ -50,7 +59,7 @@ class ProfileContainer extends React.Component<ProfileContainerPropsType, never>
         }
         return (
             <Profile profile={this.props.profile} status={this.props.status} setStatus={this.props.setStatus}
-                     userId={this.props.userId as number} setPhoto={this.props.setPhoto}/>
+                     userId={this.props.userId as number} setPhoto={this.props.setPhoto} setProfileInfo={this.props.setProfileInfo}/>
         );
     };
 
@@ -71,6 +80,7 @@ type MapDispatchPropsType = {
     setStatus: (status: string) => void,
     requestStatus: (userId: number) => void
     setPhoto: (photoFile: File) => void
+    setProfileInfo: (profileInfo: ProfileInfoType) => void
 };
 
 type OwnProfileContainerPropsType = MapDispatchPropsType & MapStatePropsType;
@@ -88,7 +98,8 @@ const mapDispatchToProps: MapDispatchPropsType = {
     requestProfile,
     setStatus,
     requestStatus,
-    setPhoto
+    setPhoto,
+    setProfileInfo
 }
 
 

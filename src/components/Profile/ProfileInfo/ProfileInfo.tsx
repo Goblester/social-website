@@ -3,7 +3,7 @@ import './ProfileInfo.module.css';
 import s from './ProfileInfo.module.css';
 import userPhoto from './../../../assets/images/userPhoto.png'
 import ProfileStatus from './ProfileStatus';
-import {ProfileType} from '../../../redux/profile-reducer';
+import {ProfileInfoType, ProfileType} from '../../../redux/profile-reducer';
 import {ProfileData} from './ProfileData/ProfileData';
 
 
@@ -13,6 +13,7 @@ type ProfileInfoPropsType = {
     setStatus: (status: string) => void
     userId: number
     setPhoto: (photo: File) => void
+    setProfileInfo: (profileInfo: ProfileInfoType) => void
 }
 
 
@@ -36,7 +37,7 @@ function ProfileInfo({profile, setStatus, status, userId, ...restProps}: Profile
                                status={status}
                                userId={userId}
                                profileId={profile.userId}/>
-                <ProfileData isMe={isMe} profile={profile}/>
+                <ProfileData isMe={isMe} profile={profile} setProfileInfo={restProps.setProfileInfo}/>
             </div>
 
         </div>
