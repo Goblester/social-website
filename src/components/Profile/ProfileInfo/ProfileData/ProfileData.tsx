@@ -1,14 +1,24 @@
-import React, {useState} from 'react';
-import {ContactsType, ProfileInfoType, ProfileType} from '../../../../redux/profile-reducer';
+import React, {useEffect, useState} from 'react';
+import {
+    changeSubmitStatus,
+    ContactsType,
+    ProfileInfoType,
+    ProfileType,
+    SubmitStatusType
+} from '../../../../redux/profile-reducer';
 import {Button, Container, Grid, Paper} from '@material-ui/core';
 import {Form} from 'react-final-form';
 import {ProfileTextField} from './ProfileDataForm';
 import {Checkboxes} from 'mui-rff';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../../redux/redux-store';
+import {FORM_ERROR} from 'final-form';
 
 type ProfileDataPropsType = {
     isMe: boolean
     profile: ProfileType
-    setProfileInfo: (profileInfo: ProfileInfoType)=>void
+    setProfileInfo: (profileInfo: ProfileInfoType) => void
+
 }
 
 type ContactPropsType = {
@@ -33,6 +43,14 @@ export type ProfileFormData = {
 
 export function ProfileData({isMe, profile, ...restProps}: ProfileDataPropsType) {
     const [editMode, setEditMode] = useState<boolean>(false);
+    const submitStatus = useSelector<RootState, SubmitStatusType>(state => state.profilePage.submitStatus)
+    const errorMessage = useSelector<RootState, string | undefined>(state => state.profilePage.errorMessage)
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if (submitStatus === 'success') {
+            setEditMode(false);
+        }
+    }, [submitStatus]);
     const lookingForAJob = `job description: ${profile.lookingForAJob ? 'yes' : 'no'}`;
     const initialValues = {
         fullName: profile.fullName,
@@ -52,8 +70,8 @@ export function ProfileData({isMe, profile, ...restProps}: ProfileDataPropsType)
     }
 
     const onSubmit = (values: ProfileInfoType) => {
-        setEditMode(prev => !prev);
         restProps.setProfileInfo(values);
+
     }
     const onButtonClick = () => {
         setEditMode(prev => !prev);
@@ -66,7 +84,10 @@ export function ProfileData({isMe, profile, ...restProps}: ProfileDataPropsType)
 
                 <Form onSubmit={onSubmit}
                       initialValues={initialValues}
-                      render={({handleSubmit, submitting}) => {
+                      validate={values => {
+                          return {}
+                      }}
+                      render={({handleSubmit, submitting, errors, submitError}) => {
                           return (
                               <form onSubmit={handleSubmit}>
                                   <Grid container
@@ -92,15 +113,27 @@ export function ProfileData({isMe, profile, ...restProps}: ProfileDataPropsType)
 
                                       {Object.keys(profile.contacts).map(key => {
                                           const newKey = key as keyof ContactsType;
-
+                                          let hasError = false
+                                          let errMessage;
+                                          if (errorMessage &&errorMessage.toLowerCase().includes(key.toLowerCase())) {
+                                              hasError = true;
+                                              errMessage = <span>invalid url format</span>
+                                          }
                                           return (
-                                              <ProfileTextField editMode={editMode} name={`contacts.` + key} key={key} label={key}
-                                                                value={profile.contacts[newKey]} variant={'outlined'}
-                                                                size={'small'}/>
+                                              <>
+                                                  <ProfileTextField editMode={editMode} name={`contacts.` + key}
+                                                                    key={key}
+                                                                    label={key}
+                                                                    value={profile.contacts[newKey]}
+                                                                    variant={'outlined'}
+                                                                    size={'small'}
+                                                                    error={hasError}/>
+                                                  {errMessage}
+                                              </>
                                           );
                                       })}
                                       {editMode && <Grid item>
-                                          <Button type={'submit'} onClick={handleSubmit}
+                                          <Button type={'submit'}
                                                   disabled={submitting} variant={'contained'}
                                                   color={'primary'}>Save</Button>
                                       </Grid>}

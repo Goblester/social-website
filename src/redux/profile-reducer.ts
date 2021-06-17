@@ -3,6 +3,7 @@ import {ThunkAction} from 'redux-thunk';
 import {profileAPI} from '../API/api';
 import {Dispatch} from 'react';
 import {RootState} from './redux-store';
+import {rejects} from 'assert';
 
 export type PostType = {
     id: number,
@@ -22,19 +23,23 @@ export type ContactsType = {
 }
 
 export type ProfileType = {
-    aboutMe: string,
-    contacts: ContactsType,
-    lookingForAJob: boolean,
-    lookingForAJobDescription: string,
-    fullName: string,
-    userId: number,
+    aboutMe: string
+    contacts: ContactsType
+    lookingForAJob: boolean
+    lookingForAJobDescription: string
+    fullName: string
+    userId: number
     photos: PhotosType
 }
 
+export type SubmitStatusType = 'success' | 'failed' | 'inProcess'
+
 type InitialStateType = {
-    posts: Array<PostType>,
-    profile: ProfileType | null,
+    posts: Array<PostType>
+    profile: ProfileType | null
     status: string
+    submitStatus: SubmitStatusType
+    errorMessage: string | undefined
 };
 
 export type ProfileInfoType = {
@@ -53,7 +58,9 @@ const initialState: InitialStateType = {
         {id: 4, message: 'bam bam bam', likesCount: 9999}
     ],
     profile: null,
-    status: ''
+    status: '',
+    submitStatus: 'inProcess',
+    errorMessage: undefined
 };
 
 const profileReducer = (state: InitialStateType = initialState, action: ProfilePageActionTypes): InitialStateType => {
@@ -85,6 +92,12 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileP
                 ...state,
                 posts: [...state.posts.filter(p => p.id !== action.id)]
             }
+        case 'social-network/profile/CHANGE-SUBMIT-STATUS':
+
+            return {
+                ...state,
+                ...action.payload
+            }
         case 'social-network/profile/SET-PHOTO-SUCCESS':
             const newProfile = state.profile ? {...state.profile, photos: {...action.photos}} : null;
             return {
@@ -99,12 +112,12 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileP
 };
 
 export type ProfilePageActionTypes =
+    ReturnType<typeof changeSubmitStatus>
     | AddPostActionType
     | setProfileActionType
     | setStatusActionType
     | deletePostActionType
     | setPhotoActionType;
-
 const ADD_POST = 'social-network/profile/ADD-POST';
 const SET_PROFILE = 'social-network/profile/SET-PROFILE';
 const SET_STATUS = 'social-network/profile/SET-STATUS';
@@ -147,7 +160,16 @@ export const setStatusAccept = (status: string): setStatusActionType => ({type: 
 
 export const deletePost = (id: number): deletePostActionType => ({type: DELETE_POST, id})
 
-const setPhotoSuccess = (photos: PhotosType): setPhotoActionType => ({type: SET_PHOTO_SUCCESS, photos})
+export const setPhotoSuccess = (photos: PhotosType): setPhotoActionType => ({type: SET_PHOTO_SUCCESS, photos})
+
+export const changeSubmitStatus = (submitStatus: SubmitStatusType, errorMessage?: string) => ({
+    type: 'social-network/profile/CHANGE-SUBMIT-STATUS' as const,
+    payload:{
+        submitStatus,
+        errorMessage
+    }
+});
+
 
 type ThunkActionType = ThunkAction<void, InitialStateType, undefined, ProfilePageActionTypes>;
 
@@ -162,7 +184,6 @@ export function requestProfile(userId: number): ThunkAction<void, InitialStateTy
 
 export function setStatus(status: string): ThunkAction<void, InitialStateType, undefined, ProfilePageActionTypes> {
     return async function (dispatch) {
-        debugger;
         const data = await profileAPI.setStatus(status);
 
         if (data.resultCode === 0) {
@@ -189,15 +210,21 @@ export function setPhoto(photos: File) {
 export function setProfileInfo(profileInfo: ProfileInfoType) {
     return async function (dispatch: Dispatch<ProfilePageActionTypes | ThunkActionType>, getState: () => RootState) {
         const userId = getState().auth.userData?.id as number;
-        debugger;
+        const profile = getState().profilePage.profile
         const mappedProfileInfo = {
             userId: userId,
             ...profileInfo
         }
+        let newProfile = {...profile as ProfileType, ...mappedProfileInfo}
+
+
         const response = await profileAPI.setProfileInfo(mappedProfileInfo);
-        debugger;
         if (response.resultCode == 0) {
             dispatch(requestProfile(userId));
+            dispatch(changeSubmitStatus('success', undefined))
+        }else{
+            dispatch(changeSubmitStatus('failed', response.messages[0]))
+            dispatch(setProfile(newProfile))
         }
     }
 }
