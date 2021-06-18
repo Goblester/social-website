@@ -63,7 +63,8 @@ export const authAPI = {
         const response = await instance.post('auth/login', {
             email: data.email,
             password: data.password,
-            rememberMe: data.rememberMe
+            rememberMe: data.rememberMe,
+            captcha: data.captcha
         });
         return response.data
     },
@@ -75,6 +76,13 @@ export const authAPI = {
 
     getAuthInfo: async function () {
         const response = await instance.get('auth/me')
+        return response.data;
+    }
+}
+
+export const securityAPI = {
+    async getCaptchaURL(){
+        const response = await instance.get('security/get-captcha-url');
         return response.data;
     }
 }

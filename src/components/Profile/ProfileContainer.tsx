@@ -11,7 +11,7 @@ import {
     setProfileInfo,
     setStatus
 } from '../../redux/profile-reducer';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {Redirect, RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from '@reduxjs/toolkit';
 import Preloader from '../common/Preloader/Preloader';
 import {getProfile, getStatus} from '../../redux/selectors/profile-selectors';
@@ -52,6 +52,10 @@ class ProfileContainer extends React.Component<ProfileContainerPropsType, never>
     }
 
     render() {
+        if(!this.props.isAuth){
+            return <Redirect to={'/login'}/>
+        }
+
         if (!this.props.profile) {
             return (
                 <Preloader/>
@@ -73,6 +77,7 @@ type MapStatePropsType = {
     profile: ProfileType | null,
     status: string,
     userId: number | undefined
+    isAuth: boolean
 }
 
 type MapDispatchPropsType = {
@@ -90,7 +95,8 @@ type ProfileContainerPropsType = RouteComponentProps<ProfilePathParamsType> & Ow
 const mapStateToProps = (state: RootState): MapStatePropsType => ({
     profile: getProfile(state),
     status: getStatus(state),
-    userId: getAuthId(state)
+    userId: getAuthId(state),
+    isAuth: state.auth.isAuthorized
 });
 
 

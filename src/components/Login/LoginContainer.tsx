@@ -6,6 +6,7 @@ import Login, {LoginDataType} from './Login';
 type MapStatePropsType = {
     isAuth: boolean,
     submitError: string | undefined
+    captchaUrl: string | null
 }
 
 type MapDispatchPropsType = {
@@ -17,7 +18,8 @@ export type LoginPropsType = MapStatePropsType & MapDispatchPropsType;
 
 const mapStateToProps = (state: RootState): MapStatePropsType => ({
     isAuth: state.auth.isAuthorized,
-    submitError: state.auth.submitError
+    submitError: state.auth.submitError,
+    captchaUrl: state.auth.captchaUrl
 })
 
 const LoginContainer = connect<MapStatePropsType, MapDispatchPropsType, {}, RootState>

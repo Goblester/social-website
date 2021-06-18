@@ -6,17 +6,19 @@ import {combineValidators, isRequired, maxLength} from '../../utils/validation/v
 import {FORM_ERROR} from 'final-form';
 
 type LoginFormPropsType = {
+    captchaUrl: string | null
     setAuthorization: (loginData: LoginDataType) => void,
     submitError: string | undefined,
     setSubmitError: (submitError: string | undefined) => void
 }
 
-const LoginForm = ({setAuthorization, ...props}: LoginFormPropsType) => {
+const LoginForm = ({setAuthorization,captchaUrl, ...props}: LoginFormPropsType) => {
     const onSubmit = (formData: LoginDataType) => {
         setAuthorization({
             email: formData.email,
             password: formData.password,
-            rememberMe: formData.rememberMe
+            rememberMe: formData.rememberMe,
+            captcha: formData.captcha
         });
 
     }
@@ -42,6 +44,8 @@ const LoginForm = ({setAuthorization, ...props}: LoginFormPropsType) => {
                           <div>
                               <Field name={'rememberMe'} component={'input'} type={'checkbox'}/> remember me
                           </div>
+                          {captchaUrl&&<div><img src={captchaUrl}/></div>}
+                          {captchaUrl&&<Field name={'captcha'} component={'input'} type={'text'}/>}
                           <div className="error">{error}</div>
                           <button type={'submit'} onClick={() => {
                               props.setSubmitError(undefined);

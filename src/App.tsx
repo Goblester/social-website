@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Navigation from './components/Navigation/Navigation';
-import {BrowserRouter, Route, RouteComponentProps, withRouter} from 'react-router-dom';
+import {BrowserRouter, Route, RouteComponentProps, Switch, withRouter} from 'react-router-dom';
 import News from './components/News/News';
 import Music from './components/Music/Music';
 import Settings from './components/Settings/Settings';
@@ -14,6 +14,7 @@ import store, {RootState} from './redux/redux-store';
 import {initializeApp} from './redux/app-reducer';
 import Preloader from './components/common/Preloader/Preloader';
 import {LazyLoading} from './hoc/LazyLoading/LazyLoading';
+
 const ProfileContainer = React.lazy(() => import('./components/Profile/ProfileContainer'));
 const DialogsContainer = React.lazy(() => import('./components/Dialogs/DialogsContainer'));
 
@@ -23,7 +24,6 @@ class App extends React.Component<AppPropsType, never> {
     }
 
     componentDidMount() {
-
         this.props.initializeApp();
     }
 
@@ -32,21 +32,26 @@ class App extends React.Component<AppPropsType, never> {
             return <Preloader/>
         }
 
+
         return (
             <div className="app-wrapper">
                 <HeaderContainer/>
                 <Navigation/>
                 <div className="app-wrapper-content">
-                    <Route path={'/profile/:userId?'}
+                    <Switch>
+                        <Route exact path={'/'}
                                render={() => LazyLoading(ProfileContainer)}/>
-                    <Route path={'/dialogs'}
-                           render={() => LazyLoading(DialogsContainer)}/>
-                    <Route path={'/news'} render={() => <News/>}/>
-                    <Route path={'/music'} render={() => <Music/>}/>
-                    <Route path={'/users'}
-                           render={() => <UsersContainer/>}/>
-                    <Route path={'/settings'} render={() => <Settings/>}/>
-                    <Route path={'/login'} render={() => <LoginContainer/>}/>
+                        <Route path={'/profile/:userId?'}
+                               render={() => LazyLoading(ProfileContainer)}/>
+                        <Route path={'/dialogs'}
+                               render={() => LazyLoading(DialogsContainer)}/>
+                        <Route path={'/news'} render={() => <News/>}/>
+                        <Route path={'/music'} render={() => <Music/>}/>
+                        <Route path={'/users'}
+                               render={() => <UsersContainer/>}/>
+                        <Route path={'/settings'} render={() => <Settings/>}/>
+                        <Route path={'/login'} render={() => <LoginContainer/>}/>
+                    </Switch>
                 </div>
             </div>
         );
@@ -55,6 +60,7 @@ class App extends React.Component<AppPropsType, never> {
 
 type MapStatePropsType = {
     initialized: boolean
+    isAuth: boolean
 }
 type MapDispatchPropsType = {
     initializeApp: () => void
@@ -66,7 +72,8 @@ type OwnAppPropsType = MapDispatchPropsType & MapStatePropsType;
 type AppPropsType = RouteComponentProps<void> & OwnAppPropsType
 
 const mapStateToProps = (state: RootState) => ({
-    initialized: state.app.initialized
+    initialized: state.app.initialized,
+    isAuth: state.auth.isAuthorized
 })
 
 
